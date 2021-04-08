@@ -9,8 +9,8 @@ from keras.models import Model, load_model
 v = 4  # var (10 mod 7) + 1
 n_of_neurons = 128
 epochs = 100
-encode_dim = 4
-
+encode_dim = 6
+N = 10000
 def f1(x,e):
     return np.cos(x) + e
 
@@ -58,7 +58,7 @@ def split_data(data, split_frac=.8):
 
     return train_data, train_labels, test_data, test_labels
 
-def gen_data(n_train=1000, n_test = 200):
+def gen_data(n_train=N, n_test = 200):
     n = n_train + n_test
     x = np.random.normal(0, 10, n)
     e = np.random.normal(0, .3, n)
@@ -125,12 +125,7 @@ def build_and_fit():
 
     encoder_model = Model(inputs=main_input, outputs=encoder)
     reg_model = Model(inputs=main_input, outputs=reg)
-
-    encoded_input = Input(shape=(encode_dim,))
-    decoder_layer = full_model.get_layer("decoder_1")(encoded_input)
-    decoder_layer = full_model.get_layer("decoder_2")(decoder_layer)
-    decoder_layer = full_model.get_layer("encoder_output")(decoder_layer)
-    decoder_model = full_model.Model(encoded_input, decoder_layer)
+    decoder_model = Model(inputs=main_input, outputs=decoder)
 
     encoder_model.save('encoder_model.h5')
     reg_model.save('regression_model.h5')
@@ -143,7 +138,7 @@ def build_and_fit():
     encoded_data = encoder_model.predict(test_data)
     np.savetxt("encoded_data.csv", encoded_data, delimiter=',')
 
-    decoded_data = decoder_model.predict(encoded_data)
+    decoded_data = decoder_model.predict(test_data)
     np.savetxt("decoded_data.csv", decoded_data, delimiter=',')
 
     regression_predictions = reg_model.predict(test_data)
