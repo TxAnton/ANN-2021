@@ -48,6 +48,29 @@ full_model = Model(inputs=main_input, outputs=[reg, decoder])
 Модель имеет один вход и два выхода  
 
 При выполнении производится генерация датасета и сохранение его в .csv файлы
+  
+Далее датасет загружается из файлов и на нем обучается вся модель
 
+```python
+full_model.fit(train_data, [train_labels, train_data], epochs=epochs, batch_size=16, validation_split=0.1, verbose=0)
+```
+
+После того как вая можель обучена она разбивается на три модели: энкодер, декодер и можель регрессии
+
+```python
+encoder_model = Model(inputs=main_input, outputs=encoder)
+reg_model = Model(inputs=main_input, outputs=reg)
+decoder_model = Model(inputs=main_input, outputs=decoder)
+```
+
+
+Данные модели созраняются в файл.
+Затем модели загружаются из файла и по ним прогоняются тестовые данные. Результат сохраняется в .csv файлы
 
 ## Полученные результаты
+Оценка модели показала сделующие результаты:
+```
+loss: 24.5082 - reg_output_loss: 0.0140 - decoder_output_loss: 24.4941 - reg_output_mae: 0.0751 - decoder_output_mae: 2.4024
+```
+
+Точность регрессии очень хорошая. Декодирование дает точность хуже, однако достаточно хорошую
