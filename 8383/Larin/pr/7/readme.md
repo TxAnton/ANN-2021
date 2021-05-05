@@ -24,14 +24,15 @@
 def func(i):
     i = i % 31
     return ((i-15) ** 2)/100 - 4
-```
-  
-Она преобразовывается в датасет
-```python
+
 def gen_sequence(seq_len = 1000):
     seq = [math.cos(i/2) + func(i) + random.normalvariate(0, 0.04) for i in range(seq_len)]
     return np.array(seq)
 
+```
+  
+Она преобразовывается в датасет
+```python
 def gen_data_from_sequence(seq_len = 1000, lookback = 10):
     seq = gen_sequence(seq_len)
     past = np.array([[[seq[j]] for j in range(i,i+lookback)] for i in range(len(seq) - lookback)])
@@ -77,3 +78,9 @@ history = model.fit(train_data,train_res,epochs=50,validation_data=(val_data, va
 
 Полученная последовательность и её сравнение с исходной функцией  
 ![Результат](images/res.png)
+
+Последняя эпоха обучения:
+```
+Epoch 50/50
+22/22 [==============================] - 0s 10ms/step - loss: 0.0250 - val_loss: 0.0167
+```
